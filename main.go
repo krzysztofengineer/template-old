@@ -1,6 +1,8 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"template/pages"
@@ -9,12 +11,23 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+var (
+	//go:embed static/*
+	staticFS embed.FS
+)
+
 func main() {
 	r := chi.NewRouter()
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		pages.Home().Render(r.Context(), w)
 	})
+
+	staticSubFS, err := fs.Sub(staticFS, "static")
+	if err != nil {
+		panic(err)
+	}
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServerFS(staticSubFS)))
 
 	s := http.Server{
 		Addr:         ":3000",

@@ -1,8 +1,12 @@
 package pages
 
+import "template/layouts"
+
 templ Home() {
-    <div>
-        <h1>Hello, world</h1>
-        <p>todo</p>
-    </div>
+    @layouts.Base() {
+        <div>
+            <h1>Hello, world</h1>
+            <p>todo</p>
+        </div>
+    }
 }
